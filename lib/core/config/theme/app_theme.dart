@@ -52,11 +52,11 @@ class LoginPageTheme {
       fillColor: AppColors.placeholder, // Placeholder background (White)
       filled: true,
       enabledBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: AppColors.placeholder_boarder), // Placeholder border (Gray)
+        borderSide: BorderSide(color: AppColors.placeholder_border), // Placeholder border (Gray)
         borderRadius: BorderRadius.circular(10),
       ),
       focusedBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: AppColors.placeholder_boarder), // Placeholder border (Gray)
+        borderSide: BorderSide(color: AppColors.placeholder_border), // Placeholder border (Gray)
         borderRadius: BorderRadius.circular(10),
       ),
     ),
@@ -86,10 +86,10 @@ class SignupPageTheme {
       filled: true,
       fillColor: AppColors.placeholder, // Placeholder background (white)
       enabledBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: AppColors.placeholder_boarder), // Placeholder border (gray)
+        borderSide: BorderSide(color: AppColors.placeholder_border), // Placeholder border (gray)
       ),
       border: OutlineInputBorder(
-        borderSide: BorderSide(color: AppColors.placeholder_boarder),
+        borderSide: BorderSide(color: AppColors.placeholder_border),
       ),
     ),
     shadowColor: AppColors.drop_shadows, // Placeholder drop shadow (gray)
@@ -145,10 +145,10 @@ class SettingsPageTheme {
       filled: true,
       fillColor: AppColors.placeholder, // Placeholder background (white)
       enabledBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: AppColors.placeholder_boarder), // Placeholder border (gray)
+        borderSide: BorderSide(color: AppColors.placeholder_border), // Placeholder border (gray)
       ),
       border: OutlineInputBorder(
-        borderSide: BorderSide(color: AppColors.placeholder_boarder),
+        borderSide: BorderSide(color: AppColors.placeholder_border),
       ),
     ),
     shadowColor: AppColors.drop_shadows, // Placeholder drop shadow (gray)

@@ -8,7 +8,7 @@ class AppColors{
   static const text_onboard_2 = Color(0xff000000);
   static const plate_number = Color(0xff00930F);
   static const placeholder = Color(0xffFFFFFF);
-  static const placeholder_boarder = Color(0xff545454);
+  static const placeholder_border = Color(0xff545454);
   static const navbar_buttons = Color(0xff000000);
   static const icons = Color(0xff000000);
   static const mainpage_text = Color(0xff000000);
