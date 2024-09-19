@@ -108,14 +108,35 @@ class SignupPageTheme {
 class MainPageTheme {
   static final theme = ThemeData(
     scaffoldBackgroundColor: AppColors.carousel_background, // Gray background
+
     appBarTheme: AppBarTheme(
       backgroundColor: AppColors.background, // White navbar
     ),
+
     iconTheme: IconThemeData(
       color: AppColors.icons, // Black icons
     ),
+
+    // Add Drawer Theme
+    drawerTheme: DrawerThemeData(
+      backgroundColor: AppColors.background, // White background for drawer
+    ),
+
+    // Customize ListTile for Drawer Items
+    listTileTheme: ListTileThemeData(
+      iconColor: AppColors.icons, // Black truck icon
+      textColor: AppColors.mainpage_text, // Black text for drawer items
+    ),
+
+    // Use text theme for plate number
+    textTheme: TextTheme(
+      titleMedium: TextStyle(
+        color: AppColors.plate_number, // Green color for plate number text
+      ),
+    ),
   );
 }
+
 
 class SettingsPageTheme {
   static final theme = ThemeData(
