@@ -9,7 +9,7 @@ class OnboardingTheme {
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.button_1, // Green button
         textStyle: const TextStyle(
-          fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.text_onboard,
+          fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textOnboard,
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
@@ -26,7 +26,7 @@ class LoginSignupOnboardingTheme {
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.placeholder, // Login button background (White)
         textStyle: const TextStyle(
-          fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.text_onboard_2, // Login button text (Black)
+          fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textOnboard_2, // Login button text (Black)
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
@@ -38,7 +38,7 @@ class LoginSignupOnboardingTheme {
   static ButtonStyle signupButtonStyle = ElevatedButton.styleFrom(
     backgroundColor: AppColors.button_1, // Green Signup button background
     textStyle: const TextStyle(
-      fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.text_onboard, // White Signup button text
+      fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textOnboard, // White Signup button text
     ),
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(10),
@@ -52,17 +52,17 @@ class LoginPageTheme {
       fillColor: AppColors.placeholder, // Placeholder background (White)
       filled: true,
       enabledBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: AppColors.placeholder_border), // Placeholder border (Gray)
+        borderSide: const BorderSide(color: AppColors.placeholderBorder), // Placeholder border (Gray)
         borderRadius: BorderRadius.circular(10),
       ),
       focusedBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: AppColors.placeholder_border), // Placeholder border (Gray)
+        borderSide: const BorderSide(color: AppColors.placeholderBorder), // Placeholder border (Gray)
         borderRadius: BorderRadius.circular(10),
       ),
     ),
-    textTheme: TextTheme(
-      bodyLarge: TextStyle(color: AppColors.mainpage_text), // Text (Black)
-      bodyMedium: TextStyle(color: AppColors.mainpage_text), // Text (Black)
+    textTheme: const TextTheme(
+      bodyLarge: TextStyle(color: AppColors.mainpageText), // Text (Black)
+      bodyMedium: TextStyle(color: AppColors.mainpageText), // Text (Black)
       titleMedium: TextStyle(color: AppColors.main), // Forgot password text (Green)
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
@@ -72,7 +72,7 @@ class LoginPageTheme {
     ),
   );
 
-  static final TextStyle registerTextStyle = TextStyle(
+  static const TextStyle registerTextStyle = TextStyle(
     color: AppColors.main, // Register text (Green)
     fontSize: 16,
     fontWeight: FontWeight.bold,
@@ -82,24 +82,24 @@ class LoginPageTheme {
 class SignupPageTheme {
   static final theme = ThemeData(
     scaffoldBackgroundColor: AppColors.background, // White background
-    inputDecorationTheme: InputDecorationTheme(
+    inputDecorationTheme: const InputDecorationTheme(
       filled: true,
       fillColor: AppColors.placeholder, // Placeholder background (white)
       enabledBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: AppColors.placeholder_border), // Placeholder border (gray)
+        borderSide: BorderSide(color: AppColors.placeholderBorder), // Placeholder border (gray)
       ),
       border: OutlineInputBorder(
-        borderSide: BorderSide(color: AppColors.placeholder_border),
+        borderSide: BorderSide(color: AppColors.placeholderBorder),
       ),
     ),
-    shadowColor: AppColors.drop_shadows, // Placeholder drop shadow (gray)
-    textTheme: TextTheme(
-      bodyLarge: TextStyle(color: AppColors.mainpage_text), // Black text
+    shadowColor: AppColors.dropShadows, // Placeholder drop shadow (gray)
+    textTheme: const TextTheme(
+      bodyLarge: TextStyle(color: AppColors.mainpageText), // Black text
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         // Login text link
-        foregroundColor: AppColors.switch_button, // Green text
+        foregroundColor: AppColors.switchButton, // Green text
       ),
     ),
   );
@@ -107,31 +107,31 @@ class SignupPageTheme {
 
 class MainPageTheme {
   static final theme = ThemeData(
-    scaffoldBackgroundColor: AppColors.carousel_background, // Gray background
+    scaffoldBackgroundColor: AppColors.carouselBackground, // Gray background
 
-    appBarTheme: AppBarTheme(
+    appBarTheme: const AppBarTheme(
       backgroundColor: AppColors.background, // White navbar
     ),
 
-    iconTheme: IconThemeData(
+    iconTheme: const IconThemeData(
       color: AppColors.icons, // Black icons
     ),
 
     // Add Drawer Theme
-    drawerTheme: DrawerThemeData(
+    drawerTheme: const DrawerThemeData(
       backgroundColor: AppColors.background, // White background for drawer
     ),
 
     // Customize ListTile for Drawer Items
-    listTileTheme: ListTileThemeData(
+    listTileTheme: const ListTileThemeData(
       iconColor: AppColors.icons, // Black truck icon
-      textColor: AppColors.mainpage_text, // Black text for drawer items
+      textColor: AppColors.mainpageText, // Black text for drawer items
     ),
 
     // Use text theme for plate number
-    textTheme: TextTheme(
+    textTheme: const TextTheme(
       titleMedium: TextStyle(
-        color: AppColors.plate_number, // Green color for plate number text
+        color: AppColors.plateNumber, // Green color for plate number text
       ),
     ),
   );
@@ -141,21 +141,21 @@ class MainPageTheme {
 class SettingsPageTheme {
   static final theme = ThemeData(
     scaffoldBackgroundColor: AppColors.background, // White background
-    inputDecorationTheme: InputDecorationTheme(
+    inputDecorationTheme: const InputDecorationTheme(
       filled: true,
       fillColor: AppColors.placeholder, // Placeholder background (white)
       enabledBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: AppColors.placeholder_border), // Placeholder border (gray)
+        borderSide: BorderSide(color: AppColors.placeholderBorder), // Placeholder border (gray)
       ),
       border: OutlineInputBorder(
-        borderSide: BorderSide(color: AppColors.placeholder_border),
+        borderSide: BorderSide(color: AppColors.placeholderBorder),
       ),
     ),
-    shadowColor: AppColors.drop_shadows, // Placeholder drop shadow (gray)
-    textTheme: TextTheme(
-      bodyLarge: TextStyle(color: AppColors.mainpage_text), // Black text
+    shadowColor: AppColors.dropShadows, // Placeholder drop shadow (gray)
+    textTheme: const TextTheme(
+      bodyLarge: TextStyle(color: AppColors.mainpageText), // Black text
     ),
-    iconTheme: IconThemeData(
+    iconTheme: const IconThemeData(
       color: AppColors.icons, // Black icons
     ),
   );
