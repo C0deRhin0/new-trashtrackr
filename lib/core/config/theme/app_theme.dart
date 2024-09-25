@@ -103,6 +103,8 @@ class SignupPageTheme {
       ),
     ),
   );
+
+  get switchButton => null;
 }
 
 class MainPageTheme {

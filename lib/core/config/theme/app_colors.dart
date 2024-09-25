@@ -6,6 +6,7 @@ class AppColors{
   static const button_1 = Color(0xff81B257);
   static const textOnboard = Color(0xffFFFFFF);
   static const textOnboard_2 = Color(0xff000000);
+  static const textInButton = Color(0xff000000);
   static const plateNumber = Color(0xff00930F);
   static const placeholder = Color(0xffFFFFFF);
   static const placeholderBorder = Color(0xff545454);
