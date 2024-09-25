@@ -40,6 +40,7 @@ class SigninPage extends StatelessWidget {
                 const SizedBox(height: 20),
                 _passwordField(context),
                 const SizedBox(height: 20),
+                forgotPasswordButton(context),
                 ElevatedButton(
                   onPressed: () {},
                   child: const Text('Sign In',
@@ -92,7 +93,33 @@ class SigninPage extends StatelessWidget {
       ),
     );
   }
-
+  Widget forgotPasswordButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          TextButton(
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => SignupPage(),
+                ),
+              );
+            },
+            child: const Text(
+              'Forgot Password?',
+              style: TextStyle(
+                fontSize: 16,
+                color: AppColors.switchButton,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
   Widget signInLink(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 30),
@@ -116,7 +143,7 @@ class SigninPage extends StatelessWidget {
               );
             },
             child: const Text(
-              'Sign In',
+              'Register',
               style: TextStyle(
                 fontSize: 16,
                 color: AppColors.switchButton,
