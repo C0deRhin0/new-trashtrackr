@@ -5,6 +5,7 @@ import 'package:new_trashtrackr/core/config/assets/app_vectors.dart';
 import 'package:new_trashtrackr/core/config/theme/app_colors.dart';
 import 'package:new_trashtrackr/core/config/theme/app_theme.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:new_trashtrackr/presentation/pages/auth/signin.dart';
 
 class SignupPage extends StatelessWidget {
   SignupPage({super.key});
@@ -138,7 +139,7 @@ class SignupPage extends StatelessWidget {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (BuildContext context) => SignupPage(),
+                  builder: (BuildContext context) => SigninPage(),
                 ),
               );
             },

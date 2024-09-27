@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:new_trashtrackr/presentation/pages/auth/signup.dart';
+import 'package:new_trashtrackr/presentation/pages/splash/splash.dart';
 import 'package:new_trashtrackr/presentation/pages/auth/signin.dart';
 
 void main() {
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: SigninPage(),
+      home: SplashPage(),
     );
   }
 }
