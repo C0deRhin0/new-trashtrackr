@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "889727817900",
+    "project_id": "authtrash",
+    "storage_bucket": "authtrash.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:889727817900:android:9b5b2e4ff02deaf1a12709",
+        "android_client_info": {
+          "package_name": "com.Trashtrackr.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzsLHkEBLyV5EIh7A7IDk_FsHgbCw_wDE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
