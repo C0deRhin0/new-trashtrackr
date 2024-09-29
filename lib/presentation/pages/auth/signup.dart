@@ -5,7 +5,11 @@ import 'package:new_trashtrackr/core/config/assets/app_vectors.dart';
 import 'package:new_trashtrackr/core/config/theme/app_colors.dart';
 import 'package:new_trashtrackr/core/config/theme/app_theme.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:new_trashtrackr/data/models/auth/create_user_req.dart';
+import 'package:new_trashtrackr/domain/usecases/auth/signup.dart';
 import 'package:new_trashtrackr/presentation/pages/auth/signin.dart';
+import 'package:new_trashtrackr/presentation/root/pages/root.dart';
+import 'package:new_trashtrackr/service_locator.dart';
 
 class SignupPage extends StatelessWidget {
   SignupPage({super.key});
@@ -47,11 +51,27 @@ class SignupPage extends StatelessWidget {
                 _confirmPasswordField(context),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    var result = await sl<SignupUseCase>().call(
+                        params: CreateUserReq(
+                            fullName: _name.text.toString(),
+                            email: _email.text.toString(),
+                            password: _password.text.toString(),
+                            confirmPassword: _confirmPassword.text.toString()));
+                    result.fold((l) {
+                      var snackbar = SnackBar(content: Text(l));
+                      ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                    }, (r) {
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  const RootPage()),
+                          (route) => false);
+                    });
+                  },
                   child: const Text('Register',
-                      style: TextStyle(
-                        color: AppColors.textInButton
-                      )),
+                      style: TextStyle(color: AppColors.textInButton)),
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(200, 50),
                     backgroundColor: AppColors.switchButton,
@@ -119,7 +139,6 @@ class SignupPage extends StatelessWidget {
       ),
     );
   }
-
 
   Widget signInLink(BuildContext context) {
     return Padding(
