@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:new_trashtrackr/presentation/home/pages/home.dart';
 import 'package:new_trashtrackr/presentation/pages/splash/splash.dart';
 import 'package:new_trashtrackr/presentation/pages/auth/signin.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: SplashPage(),
+      home: HomePage(),
     );
   }
 }
