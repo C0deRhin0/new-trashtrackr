@@ -8,7 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:new_trashtrackr/data/models/auth/create_user_req.dart';
 import 'package:new_trashtrackr/domain/usecases/auth/signup.dart';
 import 'package:new_trashtrackr/presentation/pages/auth/signin.dart';
-import 'package:new_trashtrackr/presentation/root/pages/root.dart';
+import 'package:new_trashtrackr/presentation/home/pages/home.dart';
 import 'package:new_trashtrackr/service_locator.dart';
 
 class SignupPage extends StatelessWidget {
@@ -66,7 +66,7 @@ class SignupPage extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                               builder: (BuildContext context) =>
-                                  const RootPage()),
+                                  const HomePage()),
                           (route) => false);
                     });
                   },

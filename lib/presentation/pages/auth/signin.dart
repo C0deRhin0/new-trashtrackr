@@ -10,7 +10,7 @@ import 'package:new_trashtrackr/domain/usecases/auth/signin.dart';
 import 'package:new_trashtrackr/presentation/pages/auth/signup.dart';
 
 import '../../../service_locator.dart';
-import '../../root/pages/root.dart';
+import '../../home/pages/home.dart';
 
 class SigninPage extends StatelessWidget {
   SigninPage({super.key});
@@ -61,7 +61,7 @@ class SigninPage extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                               builder: (BuildContext context) =>
-                                  const RootPage()),
+                                  const HomePage()),
                           (route) => false);
                     });
                   },
