@@ -8,23 +8,21 @@ const iconBackgroundColor = AppColors.background;
 final settingIconRounded = SymbolsGet.get('settings', SymbolStyle.rounded);
 Icon settingIcon = Icon(settingIconRounded, color: AppColors.icons);
 
-
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.main,
-      body: Align(
-        alignment: Alignment.topRight,
-        child: _settingsIcon(context),
-      )
-    );
+        backgroundColor: AppColors.main,
+        body: Align(
+          alignment: Alignment.topRight,
+          child: _settingsIcon(context),
+        ));
   }
 }
 
-Widget _settingsIcon(BuildContext context){
+Widget _settingsIcon(BuildContext context) {
   return IconButton(
     icon: settingIcon,
     iconSize: 24,
@@ -33,7 +31,7 @@ Widget _settingsIcon(BuildContext context){
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (BuildContext context) => const SettingsPage(),
+          builder: (BuildContext context) => SettingsPage(),
         ),
       );
     },
