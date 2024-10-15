@@ -31,7 +31,7 @@ Widget _settingsIcon(BuildContext context) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (BuildContext context) => SettingsPage(),
+          builder: (BuildContext context) => Settings(),
         ),
       );
     },
