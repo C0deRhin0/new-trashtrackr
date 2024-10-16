@@ -14,30 +14,34 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: AppColors.main,
-        body: Align(
-          alignment: Alignment.topRight,
+      backgroundColor: AppColors.main,
+      body: Align(
+        alignment: Alignment.topRight, 
+        child: Padding(
+          padding: const EdgeInsets.only( top: 20, right: 20),
           child: _settingsIcon(context),
-        ));
+        )
+      ),
+    );
   }
 }
 
 Widget _settingsIcon(BuildContext context) {
   return IconButton(
     icon: settingIcon,
+    color: AppColors.icons,
     iconSize: 24,
     tooltip: 'Settings',
     onPressed: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (BuildContext context) => Settings(),
-        ),
+      showModalBottomSheet(
+        context: context,
+        builder: (context) => Settings(),
       );
     },
     style: ElevatedButton.styleFrom(
       backgroundColor: iconBackgroundColor,
+      fixedSize: const Size(30, 30),
       foregroundColor: outlinedColor,
-    ),
+    )
   );
 }
