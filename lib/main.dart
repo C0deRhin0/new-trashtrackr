@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:new_trashtrackr/core/config/theme/app_colors.dart';
 import 'package:new_trashtrackr/presentation/home/pages/home.dart';
 import 'package:new_trashtrackr/presentation/pages/splash/splash.dart';
 import 'package:new_trashtrackr/presentation/pages/auth/signin.dart';
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.truckMarker),
         useMaterial3: true,
       ),
       home: SplashPage(),

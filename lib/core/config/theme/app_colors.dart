@@ -21,4 +21,5 @@ class AppColors{
   static const dropShadows = Color(0xffB6B6B6);
   static const locationMarker = Color(0xff81B257);
   static const truckMarker = Color(0xff19211A);
+  static const iconSecondary = Color(0xffBFD8AF);
 }
