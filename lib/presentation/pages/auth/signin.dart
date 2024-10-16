@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:new_trashtrackr/data/models/auth/signin_user_req.dart';
 import 'package:new_trashtrackr/domain/usecases/auth/signin.dart';
 import 'package:new_trashtrackr/presentation/pages/auth/signup.dart';
+import 'package:new_trashtrackr/presentation/pages/auth/signup_or_signin.dart';
 
 import '../../../service_locator.dart';
 import '../../home/pages/home.dart';
@@ -24,6 +25,15 @@ class _SigninPageState extends State<SigninPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: (AppBar(
+          leading: BackButton(
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => SignupOrSigninPage()),
+          ), 
+        ),backgroundColor: Colors.transparent,
+      )
+      ),
       bottomNavigationBar: signInLink(context),
       backgroundColor: AppColors.background,
       body: Padding(

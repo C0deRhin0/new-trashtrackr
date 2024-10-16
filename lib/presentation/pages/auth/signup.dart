@@ -6,6 +6,7 @@ import 'package:new_trashtrackr/data/models/auth/create_user_req.dart';
 import 'package:new_trashtrackr/domain/usecases/auth/signup.dart';
 import 'package:new_trashtrackr/presentation/pages/auth/signin.dart';
 import 'package:new_trashtrackr/presentation/home/pages/home.dart';
+import 'package:new_trashtrackr/presentation/pages/auth/signup_or_signin.dart';
 import 'package:new_trashtrackr/service_locator.dart';
 
 class SignupPage extends StatefulWidget {
@@ -25,6 +26,15 @@ class _SignupPageState extends State<SignupPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: (AppBar(
+          leading: BackButton(
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => SignupOrSigninPage()),
+          ), 
+        ),backgroundColor: Colors.transparent,
+      )
+      ),
       bottomNavigationBar: signInLink(context),
       backgroundColor: AppColors.background,
       body: Padding(
@@ -130,7 +140,8 @@ class _SignupPageState extends State<SignupPage> {
         suffixIcon: IconButton(
           icon: Icon(
             isPasswordHidden ? Icons.visibility_off : Icons.visibility,
-          ), color: AppColors.iconSecondary,
+          ),
+          color: AppColors.iconSecondary,
           onPressed: () {
             setState(() {
               isPasswordHidden = !isPasswordHidden;
@@ -152,7 +163,8 @@ class _SignupPageState extends State<SignupPage> {
         suffixIcon: IconButton(
           icon: Icon(
             isPasswordHidden ? Icons.visibility_off : Icons.visibility,
-          ), color: AppColors.iconSecondary,
+          ),
+          color: AppColors.iconSecondary,
           onPressed: () {
             setState(() {
               isPasswordHidden = !isPasswordHidden;
