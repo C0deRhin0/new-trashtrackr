@@ -79,7 +79,7 @@ class _SignupPageState extends State<SignupPage> {
                           context,
                           MaterialPageRoute(
                               builder: (BuildContext context) =>
-                                  const HomePage()),
+                                  const HomePage(title:'Home Page')),
                           (route) => false);
                     });
                   },

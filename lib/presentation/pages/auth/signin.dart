@@ -74,7 +74,7 @@ class _SigninPageState extends State<SigninPage> {
                           context,
                           MaterialPageRoute(
                               builder: (BuildContext context) =>
-                                  const HomePage()),
+                                  const HomePage(title: 'Home Page',)),
                           (route) => false);
                     });
                   },
