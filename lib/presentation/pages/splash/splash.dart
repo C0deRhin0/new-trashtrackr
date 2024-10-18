@@ -41,8 +41,8 @@ class _SplashPageState extends State<SplashPage> {
   Widget _SplashScreen() {
     return Container(
       color: AppColors.background,
-      padding: EdgeInsets.only(bottom: 472),
-      child: Center(
+      child: Align(
+        alignment: Alignment.center,
         child: SvgPicture.asset(
           AppVectors.logo,
           height: 100,
@@ -51,7 +51,6 @@ class _SplashPageState extends State<SplashPage> {
       ),
     );
   }
-}
 
 Widget _Start(VoidCallback onStartPressed) {
   return Stack(
@@ -95,4 +94,5 @@ Widget _Start(VoidCallback onStartPressed) {
       ),
     ],
   );
+}
 }
