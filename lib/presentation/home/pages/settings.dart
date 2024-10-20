@@ -36,12 +36,26 @@ class _SettingsState extends State<Settings> {
           _buildMenuItem(Icons.person_2_outlined, 'Analytics Settings', AnalyticsPage()),
           _buildMenuItem(Icons.privacy_tip_outlined, 'Privacy Settings', PrivacyPage()),
           _buildMenuItem(Icons.support_agent_outlined, 'Support Settings', SupportPage()),
-          _buildMenuItem(Icons.logout_outlined, 'Log Out', SignupOrSigninPage()),
+
+          ListTile(
+            leading: Icon(
+              Icons.logout_outlined,
+              color: AppColors.icons,
+            ),
+            title: Text(
+              'Log Out',
+              style: TextStyle(
+                color: AppColors.plateNumber,
+              ),
+            ),
+            onTap: () {
+              _showLogoutDialog(context); 
+            },
+          ),
         ],
       ),
     );
   }
-
 
   Padding _buildSectionTitle(String title) {
     return Padding(
@@ -56,6 +70,7 @@ class _SettingsState extends State<Settings> {
       ),
     );
   }
+
   ListTile _buildMenuItem(IconData icon, String title, Widget page) {
     return ListTile(
       leading: Icon(
@@ -78,4 +93,37 @@ class _SettingsState extends State<Settings> {
       },
     );
   }
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Log Out'),
+          content: Text('Are you sure you want to log out?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Yes'),
+              onPressed: () {
+                Navigator.of(context).pop(); 
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SignupOrSigninPage(),
+                  ),
+                ); 
+              },
+            ),
+            TextButton(
+              child: Text('No'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
+
