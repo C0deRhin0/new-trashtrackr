@@ -46,6 +46,7 @@ dependencies:
   location: ^7.0.1
   latlong2: ^0.9.1
   flutter_map_cancellable_tile_provider: ^3.0.2
+  carousel_slider: ^5.0.0
 
 dev_dependencies:
   flutter_test:
