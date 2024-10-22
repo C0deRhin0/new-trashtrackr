@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:new_trashtrackr/core/config/theme/app_colors.dart';
 import 'package:new_trashtrackr/presentation/pages/auth/signin.dart';
+import 'package:material_symbols_icons/get.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:new_trashtrackr/presentation/pages/auth/signup_or_signin.dart';
 import 'package:new_trashtrackr/presentation/settings/accountpage.dart';
 import 'package:new_trashtrackr/presentation/settings/notificationsettings.dart';
@@ -28,15 +30,19 @@ class _SettingsState extends State<Settings> {
       body: ListView(
         children: <Widget>[
           _buildSectionTitle('Personal Settings'),
-          _buildMenuItem(Icons.person_2_outlined, 'Account Settings', AccountPage()),
-          _buildMenuItem(Icons.notifications, 'Notification Settings', NotificationSettings()),
-          _buildMenuItem(Icons.location_on_outlined, 'Location Settings', Locationsettings()),
-
+          _buildMenuItem(
+              Icons.person_2_outlined, 'Account Settings', AccountPage()),
+          _buildMenuItem(Icons.notifications, 'Notification Settings',
+              NotificationSettings()),
+          _buildMenuItem(Icons.location_on_outlined, 'Location Settings',
+              LocationSettings()),
           _buildSectionTitle('Additional Settings'),
-          _buildMenuItem(Icons.person_2_outlined, 'Analytics Settings', AnalyticsPage()),
-          _buildMenuItem(Icons.privacy_tip_outlined, 'Privacy Settings', PrivacyPage()),
-          _buildMenuItem(Icons.support_agent_outlined, 'Support Settings', SupportPage()),
-
+          _buildMenuItem(
+              Icons.analytics_outlined, 'Analytics Settings', AnalyticsPage()),
+          _buildMenuItem(
+              Icons.privacy_tip_outlined, 'Privacy Settings', PrivacyPage()),
+          _buildMenuItem(
+              Icons.support_agent_outlined, 'Support Settings', SupportPage()),
           ListTile(
             leading: Icon(
               Icons.logout_outlined,
@@ -49,7 +55,7 @@ class _SettingsState extends State<Settings> {
               ),
             ),
             onTap: () {
-              _showLogoutDialog(context); 
+              _showLogoutDialog(context);
             },
           ),
         ],
@@ -105,13 +111,13 @@ class _SettingsState extends State<Settings> {
             TextButton(
               child: Text('Yes'),
               onPressed: () {
-                Navigator.of(context).pop(); 
+                Navigator.of(context).pop();
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                     builder: (context) => SignupOrSigninPage(),
                   ),
-                ); 
+                );
               },
             ),
             TextButton(
@@ -126,4 +132,3 @@ class _SettingsState extends State<Settings> {
     );
   }
 }
-
