@@ -1,6 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../models/concern.dart';
+import '../services/concern_service.dart';
 
-class SupportPage extends StatelessWidget {
+class SupportPage extends StatefulWidget {
+  @override
+  _SupportPageState createState() => _SupportPageState();
+}
+
+class _SupportPageState extends State<SupportPage> {
+  final ConcernService _concernService = ConcernService();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
+  final TextEditingController _concernController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,6 +29,7 @@ class SupportPage extends StatelessWidget {
             Text('Name'),
             SizedBox(height: 8),
             TextField(
+              controller: _nameController,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.0),
@@ -25,6 +40,7 @@ class SupportPage extends StatelessWidget {
             Text('Email'),
             SizedBox(height: 8),
             TextField(
+              controller: _emailController,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.0),
@@ -35,6 +51,7 @@ class SupportPage extends StatelessWidget {
             Text('Phone Number'),
             SizedBox(height: 8),
             TextField(
+              controller: _phoneNumberController,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.0),
@@ -45,6 +62,7 @@ class SupportPage extends StatelessWidget {
             Text('Concern'),
             SizedBox(height: 8),
             TextField(
+              controller: _concernController,
               maxLines: 5,
               decoration: InputDecoration(
                 alignLabelWithHint: true,
@@ -57,9 +75,7 @@ class SupportPage extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Insert functionality
-        },
+        onPressed: _submitConcern,
         backgroundColor: Colors.green,
         child: Icon(
           Icons.support_agent,
@@ -68,10 +84,38 @@ class SupportPage extends StatelessWidget {
       ),
     );
   }
-}
 
-void main() {
-  runApp(MaterialApp(
-    home: SupportPage(),
-  ));
+  void _submitConcern() {
+    if (_nameController.text.isNotEmpty &&
+        _emailController.text.isNotEmpty &&
+        _phoneNumberController.text.isNotEmpty &&
+        _concernController.text.isNotEmpty) {
+      final concern = Concern(
+        name: _nameController.text,
+        email: _emailController.text,
+        phoneNumber: _phoneNumberController.text,
+        concern: _concernController.text,
+        createdOn: Timestamp.now(),
+      );
+
+      _concernService.addConcern(concern).then((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Concern submitted successfully!")),
+        );
+      }).catchError((error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Failed to submit concern: $error")),
+        );
+      });
+
+      _nameController.clear();
+      _emailController.clear();
+      _phoneNumberController.clear();
+      _concernController.clear();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please fill out all fields.")),
+      );
+    }
+  }
 }
