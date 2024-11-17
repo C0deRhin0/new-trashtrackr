@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class AppColors{
+class AppColors {
   static const main = Color(0xff81B257);
   static const background = Color(0xffFFFFFF);
   static const button_1 = Color(0xff81B257);
@@ -21,4 +21,6 @@ class AppColors{
   static const dropShadows = Color(0xffB6B6B6);
   static const locationMarker = Color(0xff81B257);
   static const truckMarker = Color(0xff19211A);
+  static const iconSecondary = Color(0xffBFD8AF);
+  static const carouselBox = Color(0xffDCE4D0);
 }

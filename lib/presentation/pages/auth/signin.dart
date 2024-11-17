@@ -1,26 +1,39 @@
-// ignore_for_file: unnecessary_const
-
 import 'package:flutter/material.dart';
 import 'package:new_trashtrackr/core/config/assets/app_vectors.dart';
 import 'package:new_trashtrackr/core/config/theme/app_colors.dart';
-import 'package:new_trashtrackr/core/config/theme/app_theme.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:new_trashtrackr/data/models/auth/signin_user_req.dart';
 import 'package:new_trashtrackr/domain/usecases/auth/signin.dart';
 import 'package:new_trashtrackr/presentation/pages/auth/signup.dart';
+import 'package:new_trashtrackr/presentation/pages/auth/signup_or_signin.dart';
 
 import '../../../service_locator.dart';
 import '../../home/pages/home.dart';
 
-class SigninPage extends StatelessWidget {
+class SigninPage extends StatefulWidget {
   SigninPage({super.key});
 
+  @override
+  _SigninPageState createState() => _SigninPageState();
+}
+
+class _SigninPageState extends State<SigninPage> {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
+  bool isPasswordHidden = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: (AppBar(
+          leading: BackButton(
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => SignupOrSigninPage()),
+          ), 
+        ),backgroundColor: Colors.transparent,
+      )
+      ),
       bottomNavigationBar: signInLink(context),
       backgroundColor: AppColors.background,
       body: Padding(
@@ -61,7 +74,7 @@ class SigninPage extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                               builder: (BuildContext context) =>
-                                  const HomePage()),
+                                  const HomePage(title: 'Home Page',)),
                           (route) => false);
                     });
                   },
@@ -105,8 +118,19 @@ class SigninPage extends StatelessWidget {
   Widget _passwordField(BuildContext context) {
     return TextField(
       controller: _password,
-      decoration: const InputDecoration(
+      obscureText: isPasswordHidden,
+      decoration: InputDecoration(
         hintText: 'Enter Password',
+        suffixIcon: IconButton(
+          icon: Icon(
+            isPasswordHidden ? Icons.visibility_off : Icons.visibility,
+          ), color: AppColors.iconSecondary,
+          onPressed: () {
+            setState(() {
+              isPasswordHidden = !isPasswordHidden;
+            });
+          },
+        ),
       ).applyDefaults(
         Theme.of(context).inputDecorationTheme,
       ),
