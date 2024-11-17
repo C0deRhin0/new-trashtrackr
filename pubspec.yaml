@@ -49,6 +49,14 @@ dependencies:
   latlong2: ^0.9.1
   flutter_map_cancellable_tile_provider: ^3.0.2
   carousel_slider: ^5.0.0
+  flutter_launcher_icons: ^0.14.1
+
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/logo.png"
+  min_sdk_android: 21
 
 dev_dependencies:
   flutter_test:
