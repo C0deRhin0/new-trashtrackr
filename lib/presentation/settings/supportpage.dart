@@ -21,7 +21,7 @@ class _SupportPageState extends State<SupportPage> {
       appBar: AppBar(
         title: Text('Support'),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
