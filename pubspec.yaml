@@ -40,6 +40,9 @@ dependencies:
   firebase_core: ^3.6.0
   cloud_firestore: ^5.4.5
   intl: ^0.19.0
+  shared_preferences: ^2.0.15
+  firebase_storage: ^12.3.6
+  image_picker: ^1.0.0
   firebase_auth:
   get_it:
   dartz:
@@ -84,6 +87,7 @@ flutter:
   assets:
     - assets/vectors/logos/logo.svg
     - assets/vectors/logos/logoo.svg
+    - assets/Profile.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

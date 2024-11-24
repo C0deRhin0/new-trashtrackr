@@ -23,18 +23,17 @@ class PrivacyPage extends StatelessWidget {
                 buildCard(
                   title: 'Data Encryption',
                   description:
-                      'Lorem ipsum dolor amet, consectetur adipiscing elit.',
+                      'Your data is securely encrypted to protect your privacy.',
                 ),
                 SizedBox(height: 16),
                 buildCard(
                   title: 'Privacy Management',
                   description:
-                      'Lorem ipsum dolor amet, consectetur adipiscing elit.',
+                      'Control how your data is used and shared with others.',
                 ),
               ],
             ),
             SizedBox(height: 32),
-
             Text(
               'Your Privacy & Security',
               style: TextStyle(
@@ -43,14 +42,26 @@ class PrivacyPage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 16),
-            buildListTile(context, 'Data Encryption',
-                'Lorem ipsum dolor amet, consectetur adipiscing elit.'),
-            buildListTile(context, 'Digital Safety',
-                'Lorem ipsum dolor amet, consectetur adipiscing elit.'),
-            buildListTile(context, 'Do Not Sell My Personal Information',
-                'Lorem ipsum dolor amet, consectetur adipiscing elit.'),
-            buildListTile(context, 'Privacy Policy',
-                'Lorem ipsum dolor amet, consectetur adipiscing elit.'),
+            buildListTile(
+              context,
+              'Data Encryption',
+              'We use end-to-end encryption to secure your messages, files, and personal information.',
+            ),
+            buildListTile(
+              context,
+              'Digital Safety',
+              'Learn how to secure your account and protect yourself online.',
+            ),
+            buildListTile(
+              context,
+              'Do Not Sell My Personal Information',
+              'Control how your data is used for advertising and marketing purposes.',
+            ),
+            buildListTile(
+              context,
+              'Privacy Policy',
+              'Review our complete privacy policy to understand how we handle your data.',
+            ),
           ],
         ),
       ),
@@ -92,7 +103,7 @@ class PrivacyPage extends StatelessWidget {
       title: Text(title),
       trailing: Icon(Icons.arrow_forward_ios),
       onTap: () {
-        _showDialog(context, title, content); 
+        _showDialog(context, title, content);
       },
     );
   }
@@ -108,7 +119,7 @@ class PrivacyPage extends StatelessWidget {
             TextButton(
               child: Text('Close'),
               onPressed: () {
-                Navigator.of(context).pop(); 
+                Navigator.of(context).pop();
               },
             ),
           ],
