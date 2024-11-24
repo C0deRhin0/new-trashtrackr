@@ -55,8 +55,9 @@ class _HomePageState extends State<HomePage> {
     _locationData = await location.getLocation();
     setState(() {
       log(_locationData.toString());
-      currentLocation = LatLng(_locationData?.latitude ?? 13.627546, _locationData?.longitude ?? 123.190330);
-      mapController.move(currentLocation!, 15);
+      currentLocation = LatLng(_locationData?.latitude ?? 13.627546,
+          _locationData?.longitude ?? 123.190330);
+      mapController.move(currentLocation!, 17);
     });
   }
 
@@ -69,7 +70,7 @@ class _HomePageState extends State<HomePage> {
             mapController: mapController,
             options: MapOptions(
               initialCenter: currentLocation ?? LatLng(13.627546, 123.190330),
-              initialZoom: 15,
+              initialZoom: 30,
             ),
             children: [
               TileLayer(
@@ -78,17 +79,17 @@ class _HomePageState extends State<HomePage> {
                 tileProvider: CancellableNetworkTileProvider(),
               ),
               if (currentLocation != null)
-              CircleLayer(
-                circles: [
-                  CircleMarker(
-                  point: currentLocation!, 
-                  color: Colors.blue.withOpacity(0.2),
-                  borderColor: Colors.blue,
-                  borderStrokeWidth: 2,
-                  radius: 75,
-                  ),
-                ],
-              ),
+                CircleLayer(
+                  circles: [
+                    CircleMarker(
+                      point: currentLocation!,
+                      color: Colors.blue.withOpacity(0.2),
+                      borderColor: Colors.blue,
+                      borderStrokeWidth: 2,
+                      radius: 75,
+                    ),
+                  ],
+                ),
               if (currentLocation != null)
                 MarkerLayer(
                   markers: [
@@ -102,8 +103,8 @@ class _HomePageState extends State<HomePage> {
                         size: 40,
                       ),
                     ),
-                  ], 
-              ),
+                  ],
+                ),
             ],
           ),
           Align(
