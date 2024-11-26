@@ -6,7 +6,7 @@ import 'package:new_trashtrackr/data/models/auth/signin_user_req.dart';
 import 'package:new_trashtrackr/domain/usecases/auth/signin.dart';
 import 'package:new_trashtrackr/presentation/pages/auth/signup.dart';
 import 'package:new_trashtrackr/presentation/pages/auth/signup_or_signin.dart';
-
+import '../../../presentation/settings/account settings pages/forgotpassword.dart';
 import '../../../service_locator.dart';
 import '../../home/pages/home.dart';
 
@@ -26,14 +26,14 @@ class _SigninPageState extends State<SigninPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: (AppBar(
-          leading: BackButton(
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => SignupOrSigninPage()),
-          ), 
-        ),backgroundColor: Colors.transparent,
-      )
-      ),
+        leading: BackButton(
+          onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => SignupOrSigninPage()),
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+      )),
       bottomNavigationBar: signInLink(context),
       backgroundColor: AppColors.background,
       body: Padding(
@@ -73,8 +73,9 @@ class _SigninPageState extends State<SigninPage> {
                       Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  const HomePage(title: 'Home Page',)),
+                              builder: (BuildContext context) => const HomePage(
+                                    title: 'Home Page',
+                                  )),
                           (route) => false);
                     });
                   },
@@ -124,7 +125,8 @@ class _SigninPageState extends State<SigninPage> {
         suffixIcon: IconButton(
           icon: Icon(
             isPasswordHidden ? Icons.visibility_off : Icons.visibility,
-          ), color: AppColors.iconSecondary,
+          ),
+          color: AppColors.iconSecondary,
           onPressed: () {
             setState(() {
               isPasswordHidden = !isPasswordHidden;
@@ -148,7 +150,7 @@ class _SigninPageState extends State<SigninPage> {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (BuildContext context) => SignupPage(),
+                  builder: (BuildContext context) => ForgotPassword(),
                 ),
               );
             },
