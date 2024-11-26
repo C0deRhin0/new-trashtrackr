@@ -1,13 +1,13 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:new_trashtrackr/core/config/theme/app_colors.dart';
-import 'package:material_symbols_icons/get.dart';
-import 'settings.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
 import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
+import 'package:new_trashtrackr/core/config/theme/app_colors.dart';
+import 'package:material_symbols_icons/get.dart';
+import 'settings.dart';
 
 const outlinedColor = AppColors.background;
 const iconBackgroundColor = AppColors.background;
@@ -33,11 +33,11 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    initLocation();
     super.initState();
+    initLocation();
   }
 
-  initLocation() async {
+  Future<void> initLocation() async {
     serviceEnabled = await location.serviceEnabled();
     if (!serviceEnabled) {
       serviceEnabled = await location.requestService();
@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage> {
       log(_locationData.toString());
       currentLocation = LatLng(_locationData?.latitude ?? 13.627546,
           _locationData?.longitude ?? 123.190330);
-      mapController.move(currentLocation!, 17);
+      mapController.move(currentLocation!, 18);
     });
   }
 
@@ -66,11 +66,12 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: Stack(
         children: [
+          // FlutterMap for displaying the interactive map
           FlutterMap(
             mapController: mapController,
             options: MapOptions(
               initialCenter: currentLocation ?? LatLng(13.627546, 123.190330),
-              initialZoom: 30,
+              initialZoom: 18,
             ),
             children: [
               TileLayer(
@@ -107,6 +108,8 @@ class _HomePageState extends State<HomePage> {
                 ),
             ],
           ),
+
+          // Settings button on the top-right
           Align(
             alignment: Alignment.topRight,
             child: Padding(
@@ -114,33 +117,137 @@ class _HomePageState extends State<HomePage> {
               child: _settingsIcon(context),
             ),
           ),
+
+          // Persistent Bottom Sheet
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              height: 200, // Fixed height for the bottom sheet
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 8,
+                    offset: const Offset(0, -2),
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // User Section
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // User Icon
+                        Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: AppColors.background,
+                          ),
+                          child: Icon(
+                            Icons.person,
+                            size: 30,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(width: 15),
+                        // User Information
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                            Text(
+                              'Name',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            Text(
+                              'Current Location',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.plateNumber,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+
+                    // Space between User and Truck Collector
+                    const SizedBox(height: 25),
+
+                    // Truck Collector Section
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // Truck Icon
+                        Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: AppColors.background,
+                          ),
+                          child: Icon(
+                            Icons.local_shipping_rounded,
+                            size: 30,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(width: 15),
+                        // Truck Information
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                            Text(
+                              'Truck Collector',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            Text(
+                              'Plate Number',
+                              style: TextStyle(
+                                fontSize: 14,
+                              ),
+                            ),
+                            Text(
+                              'Current Location',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.plateNumber,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _mapWidget(BuildContext context) {
-    return Stack(
-      children: [
-        FlutterMap(
-          options: MapOptions(
-            initialCenter: LatLng(13.627546, 123.190330),
-            initialZoom: 16,
-          ),
-          children: [
-            TileLayer(
-              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-              userAgentPackageName: 'com.example.app',
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-Widget _settingsIcon(BuildContext context) {
-  return IconButton(
+  Widget _settingsIcon(BuildContext context) {
+    return IconButton(
       icon: settingIcon,
       color: AppColors.icons,
       iconSize: 24,
@@ -155,5 +262,7 @@ Widget _settingsIcon(BuildContext context) {
         backgroundColor: iconBackgroundColor,
         fixedSize: const Size(30, 30),
         foregroundColor: outlinedColor,
-      ));
+      ),
+    );
+  }
 }
