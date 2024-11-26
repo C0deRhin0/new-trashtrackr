@@ -176,7 +176,9 @@ class _AccountPageState extends State<AccountPage> {
         title: Text('Account'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: () => _handleBackNavigation(context),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
       ),
       body: ListView(
