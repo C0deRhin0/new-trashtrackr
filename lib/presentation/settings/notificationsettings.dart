@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:new_trashtrackr/presentation/settings/notification%20settings%20pages/notificationreport.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:new_trashtrackr/presentation/home/pages/home.dart';
+import 'notification%20settings%20pages/notificationreport.dart';
 import '../../core/config/theme/app_colors.dart';
 
 class NotificationSettings extends StatefulWidget {
@@ -30,8 +31,7 @@ class _NotificationSettingsState extends State<NotificationSettings> {
         isAnalyticsEnabled =
             prefs.getBool('isAnalyticsEnabled') ?? true; // Default to true
         isTruckLocationAlertEnabled =
-            prefs.getBool('isTruckLocationAlertEnabled') ??
-                true; // Default to true
+            prefs.getBool('isTruckLocationAlertEnabled') ?? true;
       });
     } catch (e) {
       debugPrint('Error loading preferences: $e');
@@ -52,9 +52,9 @@ class _NotificationSettingsState extends State<NotificationSettings> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Notification'),
+        title: const Text('Notification'),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -88,9 +88,23 @@ class _NotificationSettingsState extends State<NotificationSettings> {
                 ),
               ],
             ),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             // Notification Section
             _buildNotificationSettingSection(),
+            const SizedBox(height: 20.0),
+            // Notification Report Compilation Button
+            ListTile(
+              leading: const Icon(Icons.notifications, size: 30.0),
+              title: const Text("Notification Reports"),
+              trailing: const Icon(Icons.arrow_forward),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => NotificationCompilationPage()),
+                );
+              },
+            ),
           ],
         ),
       ),
@@ -102,23 +116,23 @@ class _NotificationSettingsState extends State<NotificationSettings> {
       {required String title, required String description}) {
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.symmetric(horizontal: 5.0),
+      margin: const EdgeInsets.symmetric(horizontal: 5.0),
       decoration: BoxDecoration(
         color: AppColors.carouselBox,
         borderRadius: BorderRadius.circular(10.0),
       ),
-      padding: EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
-            style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 8.0),
+          const SizedBox(height: 8.0),
           Text(
             description,
-            style: TextStyle(fontSize: 14.0),
+            style: const TextStyle(fontSize: 14.0),
           ),
         ],
       ),
@@ -130,14 +144,14 @@ class _NotificationSettingsState extends State<NotificationSettings> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 20.0),
-        Text(
+        const SizedBox(height: 20.0),
+        const Text(
           'Notification',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
         ),
         _buildToggleItem(
           title: 'Analytics',
-          icon: Icon(Icons.analytics, size: 30.0),
+          icon: const Icon(Icons.analytics, size: 30.0),
           value: isAnalyticsEnabled,
           onChanged: (value) {
             setState(() {
@@ -148,7 +162,7 @@ class _NotificationSettingsState extends State<NotificationSettings> {
         ),
         _buildToggleItem(
           title: 'Truck Location Alert',
-          icon: Icon(Icons.location_on, size: 30.0),
+          icon: const Icon(Icons.location_on, size: 30.0),
           value: isTruckLocationAlertEnabled,
           onChanged: (value) {
             setState(() {
@@ -158,7 +172,7 @@ class _NotificationSettingsState extends State<NotificationSettings> {
                 'isTruckLocationAlertEnabled', value); // Save state
           },
         ),
-        SizedBox(height: 10.0),
+        const SizedBox(height: 10.0),
       ],
     );
   }
