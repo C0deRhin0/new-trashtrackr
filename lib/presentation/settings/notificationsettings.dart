@@ -56,14 +56,7 @@ class _NotificationSettingsState extends State<NotificationSettings> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => HomePage(
-                  title: 'Home',
-                ),
-              ),
-            );
+            Navigator.pop(context);
           },
         ),
         backgroundColor: Colors.transparent,
