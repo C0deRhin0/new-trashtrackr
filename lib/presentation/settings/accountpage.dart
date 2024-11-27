@@ -8,8 +8,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:new_trashtrackr/core/config/theme/app_colors.dart';
 import 'package:new_trashtrackr/presentation/home/pages/home.dart';
 import 'package:new_trashtrackr/presentation/pages/auth/signup_or_signin.dart';
-import 'account settings pages/editemail.dart';
-import 'account settings pages/editphonenum.dart';
 import 'account settings pages/editpassword.dart';
 
 class AccountPage extends StatefulWidget {
