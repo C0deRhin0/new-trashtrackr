@@ -26,6 +26,13 @@ class _SettingsState extends State<Settings> {
           'Settings',
           style: TextStyle(color: AppColors.main),
         ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: AppColors.icons),
+          onPressed: () {
+            // Use Navigator.pop and reload HomePage
+            Navigator.pop(context, true); // Pass `true` to indicate refresh
+          },
+        ),
       ),
       body: ListView(
         children: <Widget>[
