@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../../settings/accountpage.dart';
+import 'package:new_trashtrackr/presentation/pages/auth/signin.dart';
 
 class ForgotPassword extends StatefulWidget {
   @override
@@ -8,48 +8,40 @@ class ForgotPassword extends StatefulWidget {
 }
 
 class _ForgotPasswordState extends State<ForgotPassword> {
-  final TextEditingController _oldPasswordController = TextEditingController();
-  final TextEditingController _newPasswordController = TextEditingController();
-  bool _isOldPasswordHidden = true;
-  bool _isNewPasswordHidden = true;
-
-  // Auth instance
+  final TextEditingController _emailController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // Method to verify old password and update the new password
-  Future<void> _updatePassword(BuildContext context) async {
-    final user = _auth.currentUser;
-    if (user != null) {
-      // Reauthenticate with the old password
-      final credential = EmailAuthProvider.credential(
-        email: user.email!,
-        password: _oldPasswordController.text,
+  Future<void> _sendPasswordResetEmail(BuildContext context) async {
+    final email = _emailController.text.trim();
+
+    if (email.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please enter your email address.")),
+      );
+      return;
+    }
+
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Password reset email sent to $email")),
       );
 
-      try {
-        await user.reauthenticateWithCredential(credential);
-
-        // If reauthentication succeeds, update the password
-        await user.updatePassword(_newPasswordController.text);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Password updated successfully")),
-        );
-
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => AccountPage()),
-        );
-      } on FirebaseAuthException catch (e) {
-        String errorMessage;
-        if (e.code == 'wrong-password') {
-          errorMessage = 'The old password is incorrect.';
-        } else {
-          errorMessage = 'Failed to update password: ${e.message}';
-        }
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(errorMessage)),
-        );
+      // Navigate back to the account page or login page
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => SigninPage()),
+      );
+    } on FirebaseAuthException catch (e) {
+      String errorMessage;
+      if (e.code == 'user-not-found') {
+        errorMessage = 'No user found for this email.';
+      } else {
+        errorMessage = 'Failed to send password reset email: ${e.message}';
       }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage)),
+      );
     }
   }
 
@@ -61,63 +53,47 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => AccountPage()));
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => SigninPage()),
+            );
           },
         ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Old Password Field
+            Text(
+              'Reset Your Password',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Enter your email address below and we will send you a link to reset your password.',
+              style: TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 20),
+
+            // Email Input Field
             TextField(
-              controller: _oldPasswordController,
-              obscureText: _isOldPasswordHidden,
+              controller: _emailController,
+              keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
-                labelText: "Old Password",
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _isOldPasswordHidden
-                        ? Icons.visibility_off
-                        : Icons.visibility,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _isOldPasswordHidden = !_isOldPasswordHidden;
-                    });
-                  },
-                ),
+                labelText: "Email Address",
+                border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 20),
 
-            // New Password Field
-            TextField(
-              controller: _newPasswordController,
-              obscureText: _isNewPasswordHidden,
-              decoration: InputDecoration(
-                labelText: "New Password",
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _isNewPasswordHidden
-                        ? Icons.visibility_off
-                        : Icons.visibility,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _isNewPasswordHidden = !_isNewPasswordHidden;
-                    });
-                  },
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Update Button
+            // Submit Button
             ElevatedButton(
-              onPressed: () => _updatePassword(context),
-              child: Text("Update Password"),
+              onPressed: () => _sendPasswordResetEmail(context),
+              child: Text("Send Reset Email"),
             ),
           ],
         ),
