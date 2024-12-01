@@ -24,6 +24,8 @@ class _AccountPageState extends State<AccountPage> {
   String? phoneNumber;
   String? profileImageUrl;
 
+  bool isAccountDeleted = false; // Track deletion state
+
   @override
   void initState() {
     super.initState();
@@ -169,114 +171,129 @@ class _AccountPageState extends State<AccountPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Account'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+    return WillPopScope(
+      onWillPop: () async {
+        if (isAccountDeleted) {
+          // Redirect to SignupOrSigninPage if the account was deleted
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => SignupOrSigninPage()),
+          );
+          return false; // Prevent default back navigation
+        } else {
+          Navigator.pop(context); // Default back navigation
+          return true;
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Account'),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
         ),
-      ),
-      body: ListView(
-        children: [
-          const ListTile(
-            title: Text(
-              'Profile',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
+        body: ListView(
+          children: [
+            const ListTile(
+              title: Text(
+                'Profile',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),
-          ListTile(
-            leading: GestureDetector(
-              onTap: _uploadProfileImage,
-              child: CircleAvatar(
-                backgroundImage: profileImageUrl != null
-                    ? NetworkImage(profileImageUrl!)
-                    : AssetImage('assets/Profile.png') as ImageProvider,
+            ListTile(
+              leading: GestureDetector(
+                onTap: _uploadProfileImage,
+                child: CircleAvatar(
+                  backgroundImage: profileImageUrl != null
+                      ? NetworkImage(profileImageUrl!)
+                      : AssetImage('assets/Profile.png') as ImageProvider,
+                ),
+              ),
+              title: Text(userName ?? 'Name'),
+              trailing: IconButton(
+                icon: Icon(Icons.edit),
+                onPressed: () async {
+                  final name =
+                      await _showEditDialog('Update Name', userName ?? '');
+                  if (name != null && name.isNotEmpty) {
+                    _updateName(name);
+                  }
+                },
               ),
             ),
-            title: Text(userName ?? 'Name'),
-            trailing: IconButton(
-              icon: Icon(Icons.edit),
-              onPressed: () async {
-                final name =
-                    await _showEditDialog('Update Name', userName ?? '');
-                if (name != null && name.isNotEmpty) {
-                  _updateName(name);
-                }
-              },
-            ),
-          ),
-          const Divider(),
-          const ListTile(
-            title: Text(
-              'Account Details',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
+            const Divider(),
+            const ListTile(
+              title: Text(
+                'Account Details',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),
-          ListTile(
-            leading: Icon(Icons.email),
-            title: Text(_auth.currentUser?.email ?? 'Set Email Address'),
-            trailing: IconButton(
-              icon: Icon(Icons.edit),
-              onPressed: () async {
-                final email = await _showEditDialog(
-                  'Update Email Address',
-                  _auth.currentUser?.email ?? '',
-                );
-                if (email != null && email.isNotEmpty) {
-                  _updateEmailAddress(email);
-                }
-              },
-            ),
-          ),
-          ListTile(
-            leading: Icon(Icons.phone),
-            title: Text(phoneNumber ?? 'Set Phone Number'),
-            trailing: IconButton(
-              icon: Icon(Icons.edit),
-              onPressed: () async {
-                final phone = await _showEditDialog(
-                  'Update Phone Number',
-                  phoneNumber ?? '',
-                );
-                if (phone != null && phone.isNotEmpty) {
-                  _updatePhoneNumber(phone);
-                }
-              },
-            ),
-          ),
-          ListTile(
-            title: Text(
-              'Edit Password',
-              style: TextStyle(
-                fontSize: 18.0,
-                color: AppColors.settingsTextProper,
+            ListTile(
+              leading: Icon(Icons.email),
+              title: Text(_auth.currentUser?.email ?? 'Set Email Address'),
+              trailing: IconButton(
+                icon: Icon(Icons.edit),
+                onPressed: () async {
+                  final email = await _showEditDialog(
+                    'Update Email Address',
+                    _auth.currentUser?.email ?? '',
+                  );
+                  if (email != null && email.isNotEmpty) {
+                    _updateEmailAddress(email);
+                  }
+                },
               ),
             ),
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => EditPassword(),
+            ListTile(
+              leading: Icon(Icons.phone),
+              title: Text(phoneNumber ?? 'Set Phone Number'),
+              trailing: IconButton(
+                icon: Icon(Icons.edit),
+                onPressed: () async {
+                  final phone = await _showEditDialog(
+                    'Update Phone Number',
+                    phoneNumber ?? '',
+                  );
+                  if (phone != null && phone.isNotEmpty) {
+                    _updatePhoneNumber(phone);
+                  }
+                },
               ),
             ),
-          ),
-          const Divider(),
-          const ListTile(
-            title: Text(
-              'Additional Settings',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
+            ListTile(
+              title: Text(
+                'Edit Password',
+                style: TextStyle(
+                  fontSize: 18.0,
+                  color: AppColors.settingsTextProper,
+                ),
+              ),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditPassword(),
+                ),
               ),
             ),
-          ),
-          _buildDeleteAccountOption(context),
-        ],
+            const Divider(),
+            const ListTile(
+              title: Text(
+                'Additional Settings',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            _buildDeleteAccountOption(context),
+          ],
+        ),
       ),
     );
   }
@@ -368,7 +385,8 @@ class _AccountPageState extends State<AccountPage> {
         return AlertDialog(
           title: Text('Delete Account'),
           content: Text(
-              'Are you sure you want to delete your account? This action cannot be undone.'),
+            'Are you sure you want to delete your account? This action cannot be undone.',
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
@@ -376,8 +394,8 @@ class _AccountPageState extends State<AccountPage> {
             ),
             ElevatedButton(
               onPressed: () async {
-                Navigator.of(context).pop();
-                await _deleteAccount(context);
+                Navigator.of(context).pop(); // Close the dialog
+                await _deleteAccount(context); // Immediately delete account
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
@@ -395,12 +413,20 @@ class _AccountPageState extends State<AccountPage> {
       final user = FirebaseAuth.instance.currentUser;
 
       if (user != null) {
+        // Delete user data from Firestore
         await FirebaseFirestore.instance
             .collection('users')
             .doc(user.uid)
             .delete();
+
+        // Delete the user account
         await user.delete();
         await FirebaseAuth.instance.signOut();
+
+        // Set the account deleted flag
+        setState(() {
+          isAccountDeleted = true;
+        });
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -409,6 +435,7 @@ class _AccountPageState extends State<AccountPage> {
           ),
         );
 
+        // Navigate to SignupOrSigninPage
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => SignupOrSigninPage()),

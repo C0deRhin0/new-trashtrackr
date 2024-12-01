@@ -10,6 +10,7 @@ import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_ti
 import 'package:new_trashtrackr/core/config/theme/app_colors.dart';
 import 'package:material_symbols_icons/get.dart';
 import 'package:new_trashtrackr/presentation/home/pages/adminverification.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:new_trashtrackr/presentation/home/pages/settings.dart'
     as local_settings;
 
@@ -28,6 +29,11 @@ class HomePage extends StatefulWidget {
 }
 
 class AdminModeWidget extends StatefulWidget {
+  final LatLng? currentLocation; // Accept currentLocation as a parameter
+
+  const AdminModeWidget({Key? key, required this.currentLocation})
+      : super(key: key);
+
   @override
   _AdminModeWidgetState createState() => _AdminModeWidgetState();
 }
@@ -39,6 +45,9 @@ class _HomePageState extends State<HomePage> {
   PermissionStatus? _permissionGranted;
   LocationData? _locationData;
   LatLng? currentLocation;
+  String? truckCollector = "Truck Collector";
+  String? plateNumber = "Plate Number";
+  LatLng? adminLocation;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -76,22 +85,37 @@ class _HomePageState extends State<HomePage> {
     _locationData = await location.getLocation();
     setState(() {
       log(_locationData.toString());
-      currentLocation = LatLng(_locationData?.latitude ?? 13.627546,
-          _locationData?.longitude ?? 123.190330);
+      currentLocation = LatLng(_locationData?.latitude ?? 13.631562151274863,
+          _locationData?.longitude ?? 123.18439362255296);
       mapController.move(currentLocation!, 18);
     });
   }
 
-  /// Load user data from Firestore
   Future<void> _loadUserData() async {
     final user = _auth.currentUser;
+
+    // Fetch user data
     if (user != null) {
-      final doc = await _firestore.collection('users').doc(user.uid).get();
-      if (doc.exists) {
+      final userDoc = await _firestore.collection('users').doc(user.uid).get();
+      if (userDoc.exists) {
         setState(() {
-          userName = doc['name']; // Load the name
+          userName = userDoc['name'];
         });
       }
+    }
+
+    // Fetch the latest admin data
+    final adminDoc = await _firestore.collection("admin").doc("latest").get();
+    if (adminDoc.exists) {
+      final adminData = adminDoc.data();
+      setState(() {
+        truckCollector = adminData?['adminName'] ?? "Unknown Admin";
+        plateNumber = adminData?['plateNumber'] ?? "Unknown Plate";
+        adminLocation = LatLng(
+          adminData?['currentLocation']['latitude'] ?? 0.0,
+          adminData?['currentLocation']['longitude'] ?? 0.0,
+        );
+      });
     }
   }
 
@@ -110,7 +134,8 @@ class _HomePageState extends State<HomePage> {
             FlutterMap(
               mapController: mapController,
               options: MapOptions(
-                initialCenter: currentLocation ?? LatLng(13.627546, 123.190330),
+                initialCenter: currentLocation ??
+                    LatLng(13.63156215127486, 123.18439362255296),
                 initialZoom: 18,
               ),
               children: [
@@ -189,7 +214,9 @@ class _HomePageState extends State<HomePage> {
             ),
 
             // admin mode widget
-            AdminModeWidget(),
+            AdminModeWidget(
+              currentLocation: currentLocation, // Pass currentLocation here
+            ),
 
             // Persistent Bottom Sheet
             Align(
@@ -298,28 +325,30 @@ class _HomePageState extends State<HomePage> {
         // Truck Information
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
+          children: [
             Text(
-              'Truck Collector',
+              truckCollector ?? 'Truck Collector',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
               ),
             ),
             Text(
-              'Plate Number',
+              plateNumber ?? 'Plate Number',
               style: TextStyle(
                 fontSize: 14,
               ),
             ),
-            Text(
-              'Current Location',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: AppColors.plateNumber,
+            if (adminLocation != null)
+              Text(
+                '(${adminLocation!.latitude.toStringAsFixed(5)}, '
+                '${adminLocation!.longitude.toStringAsFixed(5)})',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.plateNumber,
+                ),
               ),
-            ),
           ],
         ),
       ],
@@ -350,7 +379,95 @@ class _HomePageState extends State<HomePage> {
 // Admin mode button on the top-right
 class _AdminModeWidgetState extends State<AdminModeWidget> {
   bool isVerified = false; // Tracks verification status
-  bool isAdminMode = false; // Local state for admin mode
+  bool isAdminMode = false; // Tracks admin mode
+
+  @override
+  void initState() {
+    super.initState();
+    _loadVerificationStatus(); // Load verification status from preferences
+  }
+
+  Future<void> _loadVerificationStatus() async {
+    final user = FirebaseAuth.instance.currentUser;
+    final prefs = await SharedPreferences.getInstance();
+
+    // Reset isVerified for new users
+    if (user != null) {
+      final isSameUser = prefs.getString('lastVerifiedUser') == user.uid;
+      setState(() {
+        isVerified = isSameUser ? prefs.getBool('isVerified') ?? false : false;
+      });
+
+      // Save the current user's UID as the last logged-in user
+      if (!isSameUser) {
+        await prefs.setBool('isVerified', false); // Reset verification
+        await prefs.setString('lastVerifiedUser', user.uid);
+      }
+    }
+  }
+
+  Future<void> _saveVerificationStatus(bool status) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isVerified', status);
+  }
+
+  void _updateAdminData() async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      debugPrint("No authenticated user found. Please log in.");
+      return; // Exit if no user is logged in
+    }
+
+    //if (widget.currentLocation == null) {
+    //debugPrint("No location found. Cannot update admin data.");
+    //return; // Exit if location is unavailable
+    //}
+
+    final adminData = {
+      "adminName": user.displayName ?? user.email ?? "Unknown Admin",
+      "plateNumber": "Verified Plate Number",
+      "currentLocation": {
+        "latitude": widget.currentLocation!.latitude,
+        "longitude": widget.currentLocation!.longitude,
+      },
+      "timestamp": FieldValue.serverTimestamp(),
+    };
+
+    try {
+      await FirebaseFirestore.instance
+          .collection("admin")
+          .doc("latest")
+          .set(adminData);
+
+      debugPrint("Admin data successfully updated: $adminData");
+    } catch (e) {
+      debugPrint("Failed to update admin data: $e");
+    }
+  }
+
+  void _toggleAdminMode(bool value) {
+    setState(() {
+      isAdminMode = value;
+    });
+
+    if (isAdminMode) {
+      _triggerAdminFunctions();
+      _updateAdminData(); // Save admin details when mode is enabled
+    } else {
+      _disableAdminFunctions();
+    }
+  }
+
+  void _triggerAdminFunctions() {
+    // Placeholder for enabling admin mode features
+    debugPrint("Admin mode enabled.");
+  }
+
+  void _disableAdminFunctions() {
+    // Placeholder for disabling admin mode features
+    debugPrint("Admin mode disabled.");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -374,7 +491,6 @@ class _AdminModeWidgetState extends State<AdminModeWidget> {
           child: IconButton(
             icon: Icon(Icons.verified_user),
             onPressed: () {
-              // Show dialog with switch button and Verify button
               showDialog(
                 context: context,
                 builder: (context) {
@@ -394,30 +510,30 @@ class _AdminModeWidgetState extends State<AdminModeWidget> {
                                   onChanged: isVerified
                                       ? (value) {
                                           setState(() {
-                                            isAdminMode = value;
+                                            _toggleAdminMode(value);
                                           });
                                         }
                                       : null,
                                 ),
                               ],
                             ),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                             ElevatedButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 if (!isVerified) {
-                                  // Navigate to Admin Verification Page only if not verified
-                                  Navigator.push(
+                                  final result = await Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => AdminVerification(),
                                     ),
-                                  ).then((result) {
-                                    if (result == true) {
-                                      setState(() {
-                                        isVerified = true;
-                                      });
-                                    }
-                                  });
+                                  );
+                                  if (result == true) {
+                                    setState(() {
+                                      isVerified = true;
+                                    });
+                                    _saveVerificationStatus(true);
+                                    _updateAdminData(); // Save admin details after verification
+                                  }
                                 }
                               },
                               child: Text(isVerified ? "Verified" : "Verify"),
