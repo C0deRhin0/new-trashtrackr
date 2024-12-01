@@ -9,6 +9,7 @@ import 'package:location/location.dart';
 import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
 import 'package:new_trashtrackr/core/config/theme/app_colors.dart';
 import 'package:material_symbols_icons/get.dart';
+import 'package:new_trashtrackr/presentation/home/pages/adminverification.dart';
 import 'package:new_trashtrackr/presentation/home/pages/settings.dart'
     as local_settings;
 
@@ -24,6 +25,11 @@ class HomePage extends StatefulWidget {
 
   @override
   State<HomePage> createState() => _HomePageState();
+}
+
+class AdminModeWidget extends StatefulWidget {
+  @override
+  _AdminModeWidgetState createState() => _AdminModeWidgetState();
 }
 
 class _HomePageState extends State<HomePage> {
@@ -148,24 +154,42 @@ class _HomePageState extends State<HomePage> {
               alignment: Alignment.topRight,
               child: Padding(
                 padding: const EdgeInsets.only(top: 20, right: 20),
-                child: IconButton(
-                  icon: Icon(Icons.settings),
-                  onPressed: () async {
-                    // Navigate to Settings and wait for a result
-                    final result = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => local_settings.Settings()),
-                    );
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        spreadRadius: 1,
+                        blurRadius: 5,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: IconButton(
+                    icon: Icon(Icons.settings),
+                    onPressed: () async {
+                      // Navigate to Settings and wait for a result
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => local_settings.Settings(),
+                        ),
+                      );
 
-                    // Reload user data if Settings triggers a refresh
-                    if (result == true) {
-                      await _loadUserData();
-                    }
-                  },
+                      // Reload user data if Settings triggers a refresh
+                      if (result == true) {
+                        await _loadUserData();
+                      }
+                    },
+                  ),
                 ),
               ),
             ),
+
+            // admin mode widget
+            AdminModeWidget(),
 
             // Persistent Bottom Sheet
             Align(
@@ -318,6 +342,104 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: iconBackgroundColor,
         fixedSize: const Size(30, 30),
         foregroundColor: outlinedColor,
+      ),
+    );
+  }
+}
+
+// Admin mode button on the top-right
+class _AdminModeWidgetState extends State<AdminModeWidget> {
+  bool isVerified = false; // Tracks verification status
+  bool isAdminMode = false; // Local state for admin mode
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20, left: 20),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                spreadRadius: 1,
+                blurRadius: 5,
+                offset: Offset(0, 2),
+              ),
+            ],
+          ),
+          child: IconButton(
+            icon: Icon(Icons.verified_user),
+            onPressed: () {
+              // Show dialog with switch button and Verify button
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return StatefulBuilder(
+                    builder: (context, setState) {
+                      return AlertDialog(
+                        title: Text("Admin Mode"),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("Admin Mode:"),
+                                Switch(
+                                  value: isAdminMode,
+                                  onChanged: isVerified
+                                      ? (value) {
+                                          setState(() {
+                                            isAdminMode = value;
+                                          });
+                                        }
+                                      : null,
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 20),
+                            ElevatedButton(
+                              onPressed: () {
+                                if (!isVerified) {
+                                  // Navigate to Admin Verification Page only if not verified
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => AdminVerification(),
+                                    ),
+                                  ).then((result) {
+                                    if (result == true) {
+                                      setState(() {
+                                        isVerified = true;
+                                      });
+                                    }
+                                  });
+                                }
+                              },
+                              child: Text(isVerified ? "Verified" : "Verify"),
+                            ),
+                          ],
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text("Close"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              );
+            },
+          ),
+        ),
       ),
     );
   }
