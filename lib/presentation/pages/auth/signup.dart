@@ -8,6 +8,8 @@ import 'package:new_trashtrackr/presentation/pages/auth/signin.dart';
 import 'package:new_trashtrackr/presentation/home/pages/home.dart';
 import 'package:new_trashtrackr/presentation/pages/auth/signup_or_signin.dart';
 import 'package:new_trashtrackr/service_locator.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SignupPage extends StatefulWidget {
   SignupPage({super.key});
@@ -27,14 +29,14 @@ class _SignupPageState extends State<SignupPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: (AppBar(
-          leading: BackButton(
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => SignupOrSigninPage()),
-          ), 
-        ),backgroundColor: Colors.transparent,
-      )
-      ),
+        leading: BackButton(
+          onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => SignupOrSigninPage()),
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+      )),
       bottomNavigationBar: signInLink(context),
       backgroundColor: AppColors.background,
       body: Padding(
@@ -65,26 +67,61 @@ class _SignupPageState extends State<SignupPage> {
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () async {
+                    // Use the SignupUseCase to register the user
                     var result = await sl<SignupUseCase>().call(
-                        params: CreateUserReq(
-                            fullName: _name.text.toString(),
-                            email: _email.text.toString(),
-                            password: _password.text.toString(),
-                            confirmPassword: _confirmPassword.text.toString()));
-                    result.fold((l) {
-                      var snackbar = SnackBar(content: Text(l));
+                      params: CreateUserReq(
+                        fullName: _name.text.trim(),
+                        email: _email.text.trim(),
+                        password: _password.text.trim(),
+                        confirmPassword: _confirmPassword.text.trim(),
+                      ),
+                    );
+
+                    result.fold((failureMessage) {
+                      // Show an error message if registration fails
+                      var snackbar = SnackBar(content: Text(failureMessage));
                       ScaffoldMessenger.of(context).showSnackBar(snackbar);
-                    }, (r) {
+                    }, (success) async {
+                      // On successful registration, get the current user
+                      final user = FirebaseAuth.instance.currentUser;
+
+                      if (user != null) {
+                        try {
+                          // Add or update the user document in Firestore
+                          final docRef = FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(user.uid);
+                          await docRef.set({
+                            'name': _name.text.trim(), // Set the user's name
+                            'email': _email.text.trim(), // Set the user's email
+                            'phone': '', // Optional: default phone
+                            'profileImageUrl':
+                                '', // Optional: default profile image
+                          });
+                        } catch (e) {
+                          var snackbar = SnackBar(
+                            content: Text(
+                                'Error updating user details in Firestore: $e'),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                        }
+                      }
+
+                      // Navigate to the HomePage
                       Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  const HomePage(title:'Home Page')),
-                          (route) => false);
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              const HomePage(title: 'Home Page'),
+                        ),
+                        (route) => false,
+                      );
                     });
                   },
-                  child: const Text('Register',
-                      style: TextStyle(color: AppColors.textInButton)),
+                  child: const Text(
+                    'Register',
+                    style: TextStyle(color: AppColors.textInButton),
+                  ),
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(200, 50),
                     backgroundColor: AppColors.switchButton,
