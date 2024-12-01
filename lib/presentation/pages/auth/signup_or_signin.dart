@@ -4,6 +4,7 @@ import 'package:new_trashtrackr/core/config/assets/app_vectors.dart';
 import 'package:new_trashtrackr/core/config/theme/app_colors.dart';
 import 'package:new_trashtrackr/presentation/pages/auth/signup.dart';
 import 'package:new_trashtrackr/presentation/pages/auth/signin.dart';
+import 'package:new_trashtrackr/presentation/pages/auth/userSelectRegister.dart';
 
 class SignupOrSigninPage extends StatelessWidget {
   @override
@@ -20,9 +21,9 @@ class SignupOrSigninPage extends StatelessWidget {
               AppVectors.logo,
               height: 100,
               width: 100,
-            ), 
+            ),
           ),
-          
+
           Spacer(),
 
           // Buttons section
@@ -32,17 +33,17 @@ class SignupOrSigninPage extends StatelessWidget {
               // Login button
               ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SigninPage())
-                  );
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => SigninPage()));
                 },
-                child: Text('Login', style: TextStyle(fontSize: 18)), // Increased text size
+                child: Text('Login',
+                    style: TextStyle(fontSize: 18)), // Increased text size
                 style: ElevatedButton.styleFrom(
                   minimumSize: Size(150, 50), // Bigger button size
-                  padding: EdgeInsets.symmetric(vertical: 15), // Padding for height
-                  foregroundColor: AppColors.textInButton, 
-                  backgroundColor: AppColors.background, 
+                  padding:
+                      EdgeInsets.symmetric(vertical: 15), // Padding for height
+                  foregroundColor: AppColors.textInButton,
+                  backgroundColor: AppColors.background,
                 ),
               ),
               SizedBox(width: 30), // Increased spacing between buttons
@@ -50,15 +51,17 @@ class SignupOrSigninPage extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SignupPage())
-                  );
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => UserSelectionApp()));
                 },
-                child: Text('Register', style: TextStyle(fontSize: 18)), // Increased text size
+                child: Text('Register',
+                    style: TextStyle(fontSize: 18)), // Increased text size
                 style: ElevatedButton.styleFrom(
                   minimumSize: Size(150, 50), // Bigger button size
-                  padding: EdgeInsets.symmetric(vertical: 15), // Padding for height
-                  foregroundColor: AppColors.background, 
+                  padding:
+                      EdgeInsets.symmetric(vertical: 15), // Padding for height
+                  foregroundColor: AppColors.background,
                   backgroundColor: AppColors.button_1,
                 ),
               ),
