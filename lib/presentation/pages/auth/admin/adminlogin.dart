@@ -4,12 +4,12 @@ import 'package:new_trashtrackr/core/config/theme/app_colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:new_trashtrackr/data/models/auth/signin_user_req.dart';
 import 'package:new_trashtrackr/domain/usecases/auth/signin.dart';
-import 'package:new_trashtrackr/presentation/home/pages/home.dart';
 import 'package:new_trashtrackr/presentation/pages/auth/admin/adminregistration.dart';
 import 'package:new_trashtrackr/presentation/pages/auth/signup.dart';
 import 'package:new_trashtrackr/presentation/pages/auth/signup_or_signin.dart';
 import 'package:new_trashtrackr/presentation/settings/account%20settings%20pages/forgotpassword.dart';
 import 'package:new_trashtrackr/service_locator.dart';
+import 'package:new_trashtrackr/presentation/home/pages/admin/adminhome.dart';
 
 class AdminLoginPage extends StatefulWidget {
   AdminLoginPage({super.key});
@@ -74,7 +74,8 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                       Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
-                              builder: (BuildContext context) => const HomePage(
+                              builder: (BuildContext context) =>
+                                  const AdminHomePage(
                                     title: 'Home Page',
                                   )),
                           (route) => false);
@@ -97,7 +98,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
 
   Widget _loginTitle() {
     return const Text(
-      'Login',
+      'Driver Login',
       style: TextStyle(
         fontSize: 30,
         fontWeight: FontWeight.bold,
