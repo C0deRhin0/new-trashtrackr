@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:new_trashtrackr/core/config/assets/app_vectors.dart';
 import 'package:new_trashtrackr/core/config/theme/app_colors.dart';
-import 'package:new_trashtrackr/presentation/pages/auth/signup.dart';
-import 'package:new_trashtrackr/presentation/pages/auth/signin.dart';
+import 'package:new_trashtrackr/presentation/pages/auth/userSelectLogin.dart';
 import 'package:new_trashtrackr/presentation/pages/auth/userSelectRegister.dart';
 
 class SignupOrSigninPage extends StatelessWidget {
@@ -33,8 +32,10 @@ class SignupOrSigninPage extends StatelessWidget {
               // Login button
               ElevatedButton(
                 onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => SigninPage()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => UserSelectionAppLogin()));
                 },
                 child: Text('Login',
                     style: TextStyle(fontSize: 18)), // Increased text size
