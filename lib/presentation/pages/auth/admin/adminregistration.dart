@@ -4,6 +4,7 @@ import 'package:new_trashtrackr/core/config/theme/app_colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:new_trashtrackr/data/models/auth/create_user_req.dart';
 import 'package:new_trashtrackr/domain/usecases/auth/signup.dart';
+import 'package:new_trashtrackr/presentation/pages/auth/admin/adminlogin.dart';
 import 'package:new_trashtrackr/presentation/pages/auth/signin.dart';
 import 'package:new_trashtrackr/presentation/home/pages/home.dart';
 import 'package:new_trashtrackr/presentation/pages/auth/signup_or_signin.dart';
@@ -11,14 +12,14 @@ import 'package:new_trashtrackr/service_locator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class SignupPage extends StatefulWidget {
-  SignupPage({super.key});
+class AdminRegistrationPage extends StatefulWidget {
+  AdminRegistrationPage({super.key});
 
   @override
-  _SignupPageState createState() => _SignupPageState();
+  _AdminRegistrationPageState createState() => _AdminRegistrationPageState();
 }
 
-class _SignupPageState extends State<SignupPage> {
+class _AdminRegistrationPageState extends State<AdminRegistrationPage> {
   final TextEditingController _name = TextEditingController();
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
@@ -232,7 +233,7 @@ class _SignupPageState extends State<SignupPage> {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (BuildContext context) => SigninPage(),
+                  builder: (BuildContext context) => AdminLoginPage(),
                 ),
               );
             },
