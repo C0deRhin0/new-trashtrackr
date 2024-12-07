@@ -5,7 +5,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:new_trashtrackr/data/models/auth/create_user_req.dart';
 import 'package:new_trashtrackr/domain/usecases/auth/signup.dart';
 import 'package:new_trashtrackr/presentation/pages/auth/admin/adminlogin.dart';
-import 'package:new_trashtrackr/presentation/pages/auth/signin.dart';
 import 'package:new_trashtrackr/presentation/home/pages/home.dart';
 import 'package:new_trashtrackr/presentation/pages/auth/signup_or_signin.dart';
 import 'package:new_trashtrackr/service_locator.dart';
@@ -138,7 +137,7 @@ class _AdminRegistrationPageState extends State<AdminRegistrationPage> {
 
   Widget _registerTitle() {
     return const Text(
-      'Register',
+      'Driver Register',
       style: TextStyle(
         fontSize: 30,
         fontWeight: FontWeight.bold,
