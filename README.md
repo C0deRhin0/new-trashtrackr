@@ -71,7 +71,7 @@ This project is licensed under the [MIT License](LICENSE).
 For any inquiries or support, please contact:
 
 - **Author**: FrDnDr, raf, C0deRhin0 
-- **GitHub**: [FrDnDr](https://github.com/FrDnDr), raf[https://github.com/rafaelbalderama], C0deRhin0[https://github.com/C0deRhin0]
+- **GitHub**: [FrDnDr](https://github.com/FrDnDr), [raf](https://github.com/rafaelbalderama), [C0deRhin0](https://github.com/C0deRhin0)
 
 ---
 
