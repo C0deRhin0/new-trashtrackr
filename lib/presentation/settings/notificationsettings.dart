@@ -4,6 +4,12 @@ import 'package:new_trashtrackr/presentation/settings/notification%20settings%20
 import 'package:shared_preferences/shared_preferences.dart';
 import 'notification%20settings%20pages/notificationreport.dart';
 import '../../core/config/theme/app_colors.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart'
+    as firebase_messaging;
 
 class NotificationSettings extends StatefulWidget {
   const NotificationSettings({super.key});
@@ -20,7 +26,60 @@ class _NotificationSettingsState extends State<NotificationSettings> {
   @override
   void initState() {
     super.initState();
-    _loadToggleStates(); // Load saved states when the widget is initialized
+    _loadToggleStates();
+    _configureFCM();
+  }
+
+  Future<void> _configureFCM() async {
+    final messaging = firebase_messaging.FirebaseMessaging.instance;
+
+    // Request permissions for notifications
+    firebase_messaging.NotificationSettings settings =
+        await messaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus ==
+        firebase_messaging.AuthorizationStatus.authorized) {
+      debugPrint('User granted permission for notifications');
+    } else {
+      debugPrint('User denied or did not respond to notification permissions');
+    }
+
+    // Get the FCM token
+    final token = await messaging.getToken();
+    if (token != null) {
+      debugPrint('Successfully retrieved FCM token: $token');
+    } else {
+      debugPrint('Failed to retrieve FCM token');
+    }
+
+    // Save the FCM token to Firestore
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        // Log the user's UID
+        debugPrint('Saving FCM token for user: ${user.uid}');
+
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'fcmToken': token,
+        }, SetOptions(merge: true));
+        debugPrint('FCM token saved successfully!');
+      } catch (e) {
+        debugPrint('Error saving FCM token: $e');
+      }
+    } else {
+      debugPrint('No user is logged in, cannot save FCM token.');
+    }
+
+    // Listen for foreground messages
+    firebase_messaging.FirebaseMessaging.onMessage
+        .listen((firebase_messaging.RemoteMessage message) {
+      debugPrint(
+          'Received a message while in foreground: ${message.notification}');
+    });
   }
 
   /// Load saved toggle states from SharedPreferences
@@ -43,9 +102,51 @@ class _NotificationSettingsState extends State<NotificationSettings> {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(key, value);
+
+      // Save the toggle state to Firestore
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set(
+          {
+            'notificationPreferences': {
+              key: value,
+            },
+          },
+          SetOptions(merge: true),
+        );
+      }
     } catch (e) {
       debugPrint('Error saving preferences: $e');
     }
+  }
+
+  void _setupNotificationListeners() {
+    // Foreground notifications
+    firebase_messaging.FirebaseMessaging.onMessage
+        .listen((firebase_messaging.RemoteMessage message) {
+      if (message.notification != null) {
+        debugPrint('Notification Title: ${message.notification!.title}');
+        debugPrint('Notification Body: ${message.notification!.body}');
+        // Show a dialog/snackbar or handle the notification UI
+      }
+    });
+
+    // Background notifications
+    firebase_messaging.FirebaseMessaging.onBackgroundMessage(
+        _firebaseBackgroundHandler);
+
+    // Notification opened (when the app is in terminated or background state)
+    firebase_messaging.FirebaseMessaging.onMessageOpenedApp
+        .listen((firebase_messaging.RemoteMessage message) {
+      debugPrint('Notification was opened: ${message.notification}');
+      // Navigate to a specific screen based on the notification data
+    });
+  }
+
+// Background handler (must be a top-level function)
+  Future<void> _firebaseBackgroundHandler(
+      firebase_messaging.RemoteMessage message) async {
+    debugPrint('Handling a background message: ${message.messageId}');
   }
 
   @override

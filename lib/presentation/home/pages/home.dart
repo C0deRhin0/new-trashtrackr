@@ -5,9 +5,12 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
 import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:new_trashtrackr/core/config/theme/app_colors.dart';
 import 'package:material_symbols_icons/get.dart';
-import 'settings.dart';
+import 'package:new_trashtrackr/presentation/home/pages/settings.dart'
+    as local_settings;
 
 const outlinedColor = AppColors.background;
 const iconBackgroundColor = AppColors.background;
@@ -31,10 +34,15 @@ class _HomePageState extends State<HomePage> {
   LocationData? _locationData;
   LatLng? currentLocation;
 
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  String? userName; // To store the user's name
+
   @override
   void initState() {
     super.initState();
     initLocation();
+    _loadUserData();
   }
 
   Future<void> initLocation() async {
@@ -59,6 +67,18 @@ class _HomePageState extends State<HomePage> {
           _locationData?.longitude ?? 123.190330);
       mapController.move(currentLocation!, 18);
     });
+  }
+
+  Future<void> _loadUserData() async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      final doc = await _firestore.collection('users').doc(user.uid).get();
+      if (doc.exists) {
+        setState(() {
+          userName = doc['name'];
+        });
+      }
+    }
   }
 
   @override
@@ -165,15 +185,15 @@ class _HomePageState extends State<HomePage> {
                         // User Information
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children: [
                             Text(
-                              'Name',
-                              style: TextStyle(
+                              userName ?? 'Loading...', // Display user name
+                              style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
                               ),
                             ),
-                            Text(
+                            const Text(
                               'Current Location',
                               style: TextStyle(
                                 fontSize: 14,
@@ -252,11 +272,16 @@ class _HomePageState extends State<HomePage> {
       color: AppColors.icons,
       iconSize: 24,
       tooltip: 'Settings',
-      onPressed: () {
-        showModalBottomSheet(
+      onPressed: () async {
+        final bool? isUpdated = await showModalBottomSheet<bool>(
           context: context,
-          builder: (context) => Settings(),
+          builder: (context) => local_settings.Settings(),
         );
+
+        // If the user updated something, refresh the user data
+        if (isUpdated == true) {
+          _loadUserData();
+        }
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: iconBackgroundColor,
