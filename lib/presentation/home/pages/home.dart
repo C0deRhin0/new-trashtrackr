@@ -27,6 +27,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  LatLng? truckLocation = LatLng(13.623352, 123.188284);
   MapController mapController = MapController();
   Location location = Location();
   bool serviceEnabled = true;
@@ -126,6 +127,21 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ],
                 ),
+              if (truckLocation != null)
+                MarkerLayer(
+                  markers: [
+                    Marker(
+                      point: truckLocation!,
+                      width: 40,
+                      height: 40,
+                      child: Icon(
+                        Icons.local_shipping,
+                        color: Colors.red,
+                        size: 40,
+                      ),
+                    ),
+                  ],
+                ),
             ],
           ),
 
@@ -133,7 +149,7 @@ class _HomePageState extends State<HomePage> {
           Align(
             alignment: Alignment.topRight,
             child: Padding(
-              padding: const EdgeInsets.only(top: 20, right: 20),
+              padding: const EdgeInsets.only(top: 40, right: 20),
               child: _settingsIcon(context),
             ),
           ),
