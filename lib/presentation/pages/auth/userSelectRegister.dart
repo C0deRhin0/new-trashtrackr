@@ -17,7 +17,7 @@ class UserSelectionApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: UserSelectionScreen(),
       routes: {
-        '/adminregister': (context) => AdminRegistrationPage(),
+        // '/adminregister': (context) => AdminRegistrationPage(),
         '/residentregister': (context) => SignupPage(),
       },
     );
