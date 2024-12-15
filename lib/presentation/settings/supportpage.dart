@@ -71,15 +71,27 @@ class _SupportPageState extends State<SupportPage> {
                 ),
               ),
             ),
+            SizedBox(height: 24),
+            Center(
+              child: ElevatedButton(
+                onPressed: _submitConcern,
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  backgroundColor: Colors.green, // Submit button color
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: Text(
+                  'Submit Concern',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ),
           ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _submitConcern,
-        backgroundColor: Colors.green,
-        child: Icon(
-          Icons.support_agent,
-          color: Colors.black,
         ),
       ),
     );

@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -36,14 +35,11 @@ class _HomePageState extends State<HomePage> {
   LatLng? currentLocation;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  String? userName; // To store the user's name
 
   @override
   void initState() {
     super.initState();
     initLocation();
-    _loadUserData();
   }
 
   Future<void> initLocation() async {
@@ -63,23 +59,56 @@ class _HomePageState extends State<HomePage> {
     }
     _locationData = await location.getLocation();
     setState(() {
-      log(_locationData.toString());
       currentLocation = LatLng(_locationData?.latitude ?? 13.627546,
           _locationData?.longitude ?? 123.190330);
       mapController.move(currentLocation!, 18);
     });
   }
 
-  Future<void> _loadUserData() async {
+  /// Real-time Firestore Stream for User Data
+  Stream<DocumentSnapshot> _userStream() {
     final user = _auth.currentUser;
-    if (user != null) {
-      final doc = await _firestore.collection('users').doc(user.uid).get();
-      if (doc.exists) {
-        setState(() {
-          userName = doc['name'];
-        });
-      }
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(user?.uid)
+        .snapshots();
+  }
+
+  void _adjustMapToBounds() {
+    if (currentLocation != null && truckLocation != null) {
+      final bounds =
+          LatLngBounds.fromPoints([currentLocation!, truckLocation!]);
+
+      // Calculate center
+      final centerLat =
+          (bounds.southWest.latitude + bounds.northEast.latitude) / 2;
+      final centerLng =
+          (bounds.southWest.longitude + bounds.northEast.longitude) / 2;
+      final center = LatLng(centerLat, centerLng);
+
+      // Calculate zoom level based on distance between bounds
+      final zoom = _calculateZoomLevel(bounds);
+
+      mapController.move(center, zoom); // Set the map to the center and zoom
     }
+  }
+
+  double _calculateZoomLevel(LatLngBounds bounds) {
+    const int maxZoom = 18; // Maximum zoom level
+    const int minZoom = 3; // Minimum zoom level
+
+    // Calculate differences in coordinates
+    final latDiff =
+        (bounds.northEast.latitude - bounds.southWest.latitude).abs();
+    final lngDiff =
+        (bounds.northEast.longitude - bounds.southWest.longitude).abs();
+
+    // Determine zoom dynamically (this is a rough example; tune as needed)
+    final maxDiff = latDiff > lngDiff ? latDiff : lngDiff;
+    final zoom = maxZoom - (maxDiff * 10).ceil();
+    return zoom
+        .clamp(minZoom, maxZoom)
+        .toDouble(); // Clamp zoom between min and max
   }
 
   @override
@@ -93,6 +122,14 @@ class _HomePageState extends State<HomePage> {
             options: MapOptions(
               initialCenter: currentLocation ?? LatLng(13.627546, 123.190330),
               initialZoom: 18,
+              onMapReady: _adjustMapToBounds,
+              /*
+              MapOptions(
+                onPositionChanged: (MapPosition position, bool hasGesture) {
+                _adjustMapToBounds();
+              },
+              ),
+              */
             ),
             children: [
               TileLayer(
@@ -108,6 +145,7 @@ class _HomePageState extends State<HomePage> {
                       color: Colors.blue.withOpacity(0.2),
                       borderColor: Colors.blue,
                       borderStrokeWidth: 2,
+                      useRadiusInMeter: true,
                       radius: 75,
                     ),
                   ],
@@ -154,125 +192,123 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
 
-          // Persistent Bottom Sheet
+          // Persistent Bottom Sheet with Real-Time User Data
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              height: 200, // Fixed height for the bottom sheet
+              height: 200,
               width: double.infinity,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                ),
+                borderRadius: const BorderRadius.only(),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 8,
-                    offset: const Offset(0, -2),
+                    color: Colors.transparent,
                   ),
                 ],
               ),
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // User Section
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                child: StreamBuilder<DocumentSnapshot>(
+                  stream: _userStream(),
+                  builder: (context, snapshot) {
+                    String? userName = 'Loading...';
+
+                    if (snapshot.hasData && snapshot.data?.exists == true) {
+                      userName = snapshot.data!['name'];
+                    }
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // User Icon
-                        Container(
-                          width: 50,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            color: AppColors.background,
-                          ),
-                          child: Icon(
-                            Icons.person,
-                            size: 30,
-                            color: Colors.black,
-                          ),
-                        ),
-                        const SizedBox(width: 15),
-                        // User Information
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(
-                              userName ?? 'Loading...', // Display user name
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                            Container(
+                              width: 50,
+                              height: 50,
+                              decoration:
+                                  BoxDecoration(color: AppColors.background),
+                              child: Icon(
+                                Icons.person,
+                                size: 30,
+                                color: Colors.black,
                               ),
                             ),
-                            const Text(
-                              'Current Location',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.plateNumber,
+                            const SizedBox(width: 15),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  userName ?? 'User',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                const Text(
+                                  'Current Location',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.plateNumber,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 25),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            // Truck Icon
+                            Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: AppColors.background,
                               ),
+                              child: Icon(
+                                Icons.local_shipping_rounded,
+                                size: 30,
+                                color: Colors.black,
+                              ),
+                            ),
+                            const SizedBox(width: 15),
+                            // Truck Information
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                Text(
+                                  'Truck Collector',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                Text(
+                                  'Plate Number',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                Text(
+                                  'Current Location',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.plateNumber,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
                       ],
-                    ),
-
-                    // Space between User and Truck Collector
-                    const SizedBox(height: 25),
-
-                    // Truck Collector Section
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        // Truck Icon
-                        Container(
-                          width: 50,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            color: AppColors.background,
-                          ),
-                          child: Icon(
-                            Icons.local_shipping_rounded,
-                            size: 30,
-                            color: Colors.black,
-                          ),
-                        ),
-                        const SizedBox(width: 15),
-                        // Truck Information
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Text(
-                              'Truck Collector',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                            Text(
-                              'Plate Number',
-                              style: TextStyle(
-                                fontSize: 14,
-                              ),
-                            ),
-                            Text(
-                              'Current Location',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.plateNumber,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
+                    );
+                  },
                 ),
               ),
             ),
@@ -288,16 +324,11 @@ class _HomePageState extends State<HomePage> {
       color: AppColors.icons,
       iconSize: 24,
       tooltip: 'Settings',
-      onPressed: () async {
-        final bool? isUpdated = await showModalBottomSheet<bool>(
+      onPressed: () {
+        showModalBottomSheet(
           context: context,
           builder: (context) => local_settings.Settings(),
         );
-
-        // If the user updated something, refresh the user data
-        if (isUpdated == true) {
-          _loadUserData();
-        }
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: iconBackgroundColor,
