@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -174,11 +175,7 @@ class _AccountPageState extends State<AccountPage> {
     return WillPopScope(
       onWillPop: () async {
         if (isAccountDeleted) {
-          // Redirect to SignupOrSigninPage if the account was deleted
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => SignupOrSigninPage()),
-          );
+          _showLogoutCountdown(context);
           return false; // Prevent default back navigation
         } else {
           Navigator.pop(context); // Default back navigation
@@ -191,7 +188,11 @@ class _AccountPageState extends State<AccountPage> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
-              Navigator.pop(context);
+              if (isAccountDeleted) {
+                _showLogoutCountdown(context);
+              } else {
+                Navigator.pop(context);
+              }
             },
           ),
         ),
@@ -371,7 +372,7 @@ class _AccountPageState extends State<AccountPage> {
         'Delete Account',
         style: TextStyle(
           fontSize: 18.0,
-          color: AppColors.settingsTextProper,
+          color: const Color.fromARGB(255, 243, 11, 11),
         ),
       ),
       onTap: () => _confirmDeleteAccount(context),
@@ -419,35 +420,27 @@ class _AccountPageState extends State<AccountPage> {
             .doc(user.uid)
             .delete();
 
-        // Delete the user account
+        // Delete user account
         await user.delete();
+
+        // Sign out user to clear Firebase auth session
         await FirebaseAuth.instance.signOut();
-
-        // Set the account deleted flag
-        setState(() {
-          isAccountDeleted = true;
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Account deleted successfully.'),
-            backgroundColor: Colors.green,
-          ),
-        );
-
-        // Navigate to SignupOrSigninPage
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => SignupOrSigninPage()),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('No user is currently signed in.'),
-            backgroundColor: Colors.orange,
-          ),
-        );
       }
+
+      // Mark account as deleted
+      setState(() {
+        isAccountDeleted = true;
+      });
+
+      // Show the countdown
+      _showLogoutCountdown(context);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Account deleted successfully. Redirecting...'),
+          backgroundColor: Colors.green,
+        ),
+      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -456,5 +449,38 @@ class _AccountPageState extends State<AccountPage> {
         ),
       );
     }
+  }
+
+  void _showLogoutCountdown(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        int countdown = 5; // Countdown in seconds
+        return StatefulBuilder(
+          builder: (context, setState) {
+            // Start a periodic timer to handle countdown
+            Timer.periodic(Duration(seconds: 1), (timer) {
+              if (countdown > 1) {
+                setState(() {
+                  countdown--;
+                });
+              } else {
+                timer.cancel();
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => SignupOrSigninPage()),
+                  (route) => false,
+                );
+              }
+            });
+
+            return AlertDialog(
+              title: Text('Logging Out'),
+              content: Text('You will be redirected in $countdown seconds.'),
+            );
+          },
+        );
+      },
+    );
   }
 }
